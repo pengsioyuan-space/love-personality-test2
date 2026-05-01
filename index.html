@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4种恋爱依恋类型测试</title>
+  <style>
+    :root {
+      --bg: #fff0f6;
+      --bg2: #ffe4ee;
+      --pink: #ff6f9f;
+      --pink-dark: #e94378;
+      --rose: #ff8db3;
+      --text: #3a2030;
+      --muted: #7c5d6c;
+      --card: rgba(255, 255, 255, 0.84);
+      --line: rgba(233, 74, 124, 0.18);
+      --safe: #38b883;
+      --anxious: #ff5f86;
+      --avoidant: #5497e8;
+      --fearful: #8b65d8;
+      --shadow: 0 22px 60px rgba(214, 65, 120, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 8%, rgba(255, 155, 195, 0.35), transparent 28%),
+        radial-gradient(circle at 82% 5%, rgba(255, 204, 224, 0.62), transparent 30%),
+        linear-gradient(135deg, var(--bg), var(--bg2));
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(4px);
+      opacity: 0.5;
+    }
+
+    body::before {
+      left: -110px;
+      top: 160px;
+      background: radial-gradient(circle, rgba(255, 111, 159, 0.32), transparent 70%);
+    }
+
+    body::after {
+      right: -120px;
+      bottom: 110px;
+      background: radial-gradient(circle, rgba(255, 163, 196, 0.46), transparent 70%);
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 30px 0 56px;
+    }
+
+    .hide { display: none !important; }
+
+    .password-screen {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-card {
+      width: min(480px, 100%);
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(255, 111, 159, 0.22);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 34px 28px 28px;
+      text-align: center;
+      backdrop-filter: blur(16px);
+    }
+
+    .heart-badge {
+      width: 74px;
+      height: 74px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 16px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #ff75a5, #ffb7cc);
+      color: #fff;
+      font-size: 34px;
+      box-shadow: 0 12px 32px rgba(255, 92, 145, 0.3);
+      transform: rotate(-6deg);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    .login-card h1 {
+      font-size: clamp(28px, 6vw, 40px);
+      letter-spacing: -0.03em;
+      margin-bottom: 10px;
+      color: #422032;
+    }
+
+    .login-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 15px;
+      margin-bottom: 22px;
+    }
+
+    .password-box {
+      display: flex;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 22px;
+      background: #fff4f8;
+      border: 1px solid rgba(255, 111, 159, 0.2);
+    }
+
+    input[type="password"] {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 14px 14px;
+      font-size: 17px;
+      color: var(--text);
+      min-width: 0;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .primary-btn {
+      border-radius: 18px;
+      padding: 14px 22px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 16px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      box-shadow: 0 12px 28px rgba(234, 62, 122, 0.24);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px rgba(234, 62, 122, 0.32);
+    }
+
+    .primary-btn:active { transform: translateY(0); }
+
+    .error-msg {
+      min-height: 24px;
+      margin-top: 14px;
+      color: #d62962;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      color: #4a2637;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      color: #fff;
+      background: linear-gradient(135deg, #ff6f9f, #ffb1cb);
+      box-shadow: 0 8px 24px rgba(255, 111, 159, 0.24);
+    }
+
+    .ghost-btn {
+      border-radius: 999px;
+      padding: 11px 16px;
+      background: rgba(255, 255, 255, 0.7);
+      color: #9a4164;
+      border: 1px solid rgba(255, 111, 159, 0.2);
+      font-weight: 800;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 246, 250, 0.82));
+      border: 1px solid rgba(255, 111, 159, 0.18);
+      box-shadow: var(--shadow);
+      border-radius: 34px;
+      padding: clamp(28px, 5vw, 48px);
+      margin-bottom: 22px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "♡";
+      position: absolute;
+      right: 34px;
+      top: 18px;
+      color: rgba(255, 111, 159, 0.16);
+      font-size: 140px;
+      line-height: 1;
+      transform: rotate(14deg);
+      font-family: Georgia, serif;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255, 111, 159, 0.1);
+      color: var(--pink-dark);
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      max-width: 780px;
+      font-size: clamp(34px, 7vw, 66px);
+      line-height: 1.05;
+      letter-spacing: -0.055em;
+      color: #3b1f2d;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 span { color: var(--pink-dark); }
+
+    .hero-text {
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.85;
+      position: relative;
+      z-index: 1;
+    }
+
+    .rule-card {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .rule-item {
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid rgba(255, 111, 159, 0.16);
+      border-radius: 20px;
+      padding: 15px 10px;
+      text-align: center;
+      box-shadow: 0 10px 28px rgba(214, 65, 120, 0.08);
+    }
+
+    .rule-item b {
+      display: block;
+      color: var(--pink-dark);
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .rule-item span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .progress-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      margin: 0 0 20px;
+      padding: 12px 0;
+      background: linear-gradient(180deg, rgba(255, 240, 246, 0.98), rgba(255, 240, 246, 0.74));
+      backdrop-filter: blur(10px);
+    }
+
+    .progress-shell {
+      height: 12px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(255, 111, 159, 0.16);
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #ff80ad, #e94378);
+      border-radius: 999px;
+      transition: width 0.25s ease;
+    }
+
+    .progress-text {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      color: #8a4965;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .questions {
+      display: grid;
+      gap: 16px;
+    }
+
+    .question-card {
+      background: var(--card);
+      border: 1px solid rgba(255, 111, 159, 0.18);
+      border-radius: 26px;
+      box-shadow: 0 14px 38px rgba(214, 65, 120, 0.1);
+      padding: 22px;
+      backdrop-filter: blur(12px);
+    }
+
+    .question-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .question-no {
+      flex: 0 0 auto;
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: #fff0f6;
+      color: var(--pink-dark);
+      font-weight: 900;
+      border: 1px solid rgba(255, 111, 159, 0.22);
+    }
+
+    .question-title {
+      padding-top: 6px;
+      font-size: 18px;
+      line-height: 1.55;
+      font-weight: 850;
+      color: #422235;
+    }
+
+    .scale {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .scale input { display: none; }
+
+    .scale label {
+      min-height: 72px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 10px 6px;
+      border-radius: 18px;
+      background: #fff8fb;
+      border: 1px solid rgba(255, 111, 159, 0.18);
+      color: var(--muted);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      user-select: none;
+    }
+
+    .scale label:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 111, 159, 0.42);
+      box-shadow: 0 10px 24px rgba(214, 65, 120, 0.12);
+    }
+
+    .scale label strong {
+      font-size: 20px;
+      color: #d74b7c;
+    }
+
+    .scale label span {
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .scale input:checked + label {
+      background: linear-gradient(135deg, #ff78a8, #e94378);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 14px 30px rgba(234, 62, 122, 0.22);
+      transform: translateY(-2px);
+    }
+
+    .scale input:checked + label strong { color: #fff; }
+
+    .submit-bar {
+      position: sticky;
+      bottom: 16px;
+      z-index: 30;
+      margin-top: 24px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(255, 111, 159, 0.18);
+      box-shadow: 0 18px 60px rgba(214, 65, 120, 0.18);
+      border-radius: 26px;
+      padding: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      backdrop-filter: blur(14px);
+    }
+
+    .submit-tip {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 750;
+      padding-left: 8px;
+    }
+
+    .result-header {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .result-main, .result-side, .score-card, .suggest-card {
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(255, 111, 159, 0.18);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      backdrop-filter: blur(16px);
+    }
+
+    .result-main h1 {
+      font-size: clamp(30px, 6vw, 54px);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      margin-bottom: 14px;
+      color: #3b1f2d;
+    }
+
+    .type-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      color: #fff;
+      font-weight: 900;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+    }
+
+    .result-main p {
+      color: var(--muted);
+      line-height: 1.85;
+      font-size: 16px;
+    }
+
+    .score-ring {
+      width: 168px;
+      height: 168px;
+      margin: 2px auto 18px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--pink) 0deg, #ffe6ef 0deg);
+      position: relative;
+    }
+
+    .score-ring::before {
+      content: "";
+      position: absolute;
+      width: 126px;
+      height: 126px;
+      border-radius: 50%;
+      background: #fff8fb;
+      box-shadow: inset 0 0 0 1px rgba(255, 111, 159, 0.14);
+    }
+
+    .score-ring-inner {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .score-ring-inner b {
+      display: block;
+      font-size: 36px;
+      line-height: 1;
+      color: #3d2030;
+    }
+
+    .score-ring-inner span {
+      display: block;
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .result-side p {
+      color: var(--muted);
+      line-height: 1.7;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .score-card {
+      padding: 22px;
+      box-shadow: 0 14px 38px rgba(214, 65, 120, 0.1);
+    }
+
+    .score-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-weight: 900;
+      color: #3f2031;
+    }
+
+    .score-title span:last-child {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .bar {
+      height: 12px;
+      border-radius: 999px;
+      background: #ffe8f0;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.7s ease;
+    }
+
+    .score-card p {
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .suggest-card {
+      margin-bottom: 18px;
+      box-shadow: 0 14px 38px rgba(214, 65, 120, 0.1);
+    }
+
+    .suggest-card h2 {
+      margin-bottom: 12px;
+      font-size: 24px;
+      color: #3b1f2d;
+    }
+
+    .suggest-card ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .secondary-btn {
+      border-radius: 18px;
+      padding: 14px 18px;
+      background: #fff7fb;
+      color: #9a4164;
+      border: 1px solid rgba(255, 111, 159, 0.22);
+      font-weight: 900;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 100;
+      transform: translateX(-50%) translateY(120px);
+      background: #3b1f2d;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-weight: 800;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+      opacity: 0;
+      transition: all 0.24s ease;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 820px) {
+      .topbar { align-items: flex-start; }
+      .rule-card { grid-template-columns: repeat(5, minmax(80px, 1fr)); overflow-x: auto; padding-bottom: 4px; }
+      .scale { grid-template-columns: 1fr; }
+      .scale label { min-height: 54px; flex-direction: row; justify-content: flex-start; padding: 12px 14px; }
+      .scale label strong { width: 30px; text-align: center; }
+      .submit-bar { align-items: stretch; flex-direction: column; }
+      .submit-tip { padding-left: 0; text-align: center; }
+      .primary-btn { width: 100%; }
+      .result-header, .score-grid { grid-template-columns: 1fr; }
+      .password-box { flex-direction: column; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .topbar, .progress-wrap, .submit-bar, .action-row, .password-screen { display: none !important; }
+      .page { width: 100%; padding: 0; }
+      .result-main, .result-side, .score-card, .suggest-card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <section id="passwordScreen" class="password-screen">
+    <div class="login-card">
+      <div class="heart-badge">♥</div>
+      <h1>恋爱依恋类型测试</h1>
+      <p>请输入进入密码，开始完成 20 道题目。</p>
+      <form id="passwordForm" class="password-box">
+        <input id="passwordInput" type="password" placeholder="请输入密码" autocomplete="current-password" />
+        <button class="primary-btn" type="submit">进入测试</button>
+      </form>
+      <div id="passwordError" class="error-msg"></div>
+    </div>
+  </section>
+
+  <main id="app" class="page hide">
+    <div class="topbar">
+      <div class="brand"><span class="brand-icon">♥</span><span>4种恋爱依恋类型测试</span></div>
+      <button id="lockBtn" class="ghost-btn" type="button">退出 / 锁定</button>
+    </div>
+
+    <section id="testPage">
+      <div class="hero">
+        <div class="eyebrow">♡ 20题轻测试 · 适合自我觉察</div>
+        <h1>看看你在恋爱中更接近哪一种<span>依恋类型</span></h1>
+        <p class="hero-text">请根据你在亲密关系中的真实感受打分。没有绝对好坏，也不需要选择“看起来正确”的答案，只要选最接近自己的状态即可。</p>
+      </div>
+
+      <div class="rule-card" aria-label="评分说明">
+        <div class="rule-item"><b>1</b><span>非常不符合</span></div>
+        <div class="rule-item"><b>2</b><span>比较不符合</span></div>
+        <div class="rule-item"><b>3</b><span>一般 / 说不清</span></div>
+        <div class="rule-item"><b>4</b><span>比较符合</span></div>
+        <div class="rule-item"><b>5</b><span>非常符合</span></div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-text"><span id="progressLabel">已完成 0 / 20</span><span>完成后生成结果报告</span></div>
+        <div class="progress-shell"><div id="progressFill" class="progress-fill"></div></div>
+      </div>
+
+      <form id="quizForm">
+        <div id="questions" class="questions"></div>
+        <div class="submit-bar">
+          <div id="submitTip" class="submit-tip">请完成全部题目后查看结果。</div>
+          <button class="primary-btn" type="submit">生成我的结果报告</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="resultPage" class="hide">
+      <div class="result-header">
+        <div class="result-main">
+          <div id="typePill" class="type-pill">我的主要类型</div>
+          <h1 id="resultTitle">结果标题</h1>
+          <p id="resultDesc">结果描述</p>
+          <div class="action-row">
+            <button id="backBtn" class="secondary-btn" type="button">重新答题</button>
+            <button id="copyBtn" class="primary-btn" type="button">复制结果文案</button>
+            <button id="printBtn" class="secondary-btn" type="button">打印 / 保存PDF</button>
+          </div>
+        </div>
+        <div class="result-side">
+          <div id="scoreRing" class="score-ring"><div class="score-ring-inner"><b id="topScore">0</b><span>最高分 / 25</span></div></div>
+          <p id="mixDesc">如果两个类型分数接近，说明你可能具有混合型倾向。</p>
+        </div>
+      </div>
+
+      <div id="scoreGrid" class="score-grid"></div>
+
+      <div class="suggest-card">
+        <h2>给你的关系小建议</h2>
+        <ul id="adviceList"></ul>
+      </div>
+
+      <div class="suggest-card">
+        <h2>温馨提示</h2>
+        <p style="color: var(--muted); line-height: 1.85;">依恋类型不是固定标签，也不是专业诊断。它更像是一面镜子，帮助你看见自己在关系里的习惯、需求与保护方式。真正重要的不是给自己贴标签，而是慢慢学会更安全地爱人，也更温柔地照顾自己。</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast">已复制结果</div>
+
+  <script>
+    const PASSWORD = "love2026";
+
+    const scaleLabels = [
+      "非常不符合",
+      "比较不符合",
+      "一般 / 说不清",
+      "比较符合",
+      "非常符合"
+    ];
+
+    const questions = [
+      { text: "我在恋爱中通常能比较自然地表达自己的感受和需求。", type: "secure" },
+      { text: "如果对方没有及时回复我，我会忍不住反复猜测原因。", type: "anxious" },
+      { text: "当关系变得太亲密时，我有时会想保留更多个人空间。", type: "avoidant" },
+      { text: "我既渴望亲密关系，又会担心自己在关系里受伤。", type: "fearful" },
+      { text: "我相信真正亲密的关系里，双方可以沟通问题，而不是彼此猜测。", type: "secure" },
+      { text: "我会比较在意对方有没有及时回应我、关注我。", type: "anxious" },
+      { text: "当伴侣太依赖我时，我可能会感到压力。", type: "avoidant" },
+      { text: "我有时会在想靠近一个人和想推开对方之间摇摆。", type: "fearful" },
+      { text: "在关系中，我通常能同时照顾自己的需要和对方的感受。", type: "secure" },
+      { text: "如果对方态度有变化，我容易觉得是不是感情出了问题。", type: "anxious" },
+      { text: "比起频繁表达情绪，我更习惯先自己消化。", type: "avoidant" },
+      { text: "我不太容易完全相信一段关系会一直稳定下去。", type: "fearful" },
+      { text: "我觉得稳定的关系应该既有亲密，也有各自的独立空间。", type: "secure" },
+      { text: "我希望伴侣能经常用行动或语言让我确认他/她在乎我。", type: "anxious" },
+      { text: "遇到矛盾时，我有时会选择先拉开距离，而不是马上沟通。", type: "avoidant" },
+      { text: "我很想被理解和靠近，但又害怕自己太投入之后失控。", type: "fearful" },
+      { text: "我能接受关系中偶尔的冷静期，不会马上觉得关系要结束。", type: "secure" },
+      { text: "我对细节比较敏感，容易从对方的小变化里联想到很多。", type: "anxious" },
+      { text: "我不喜欢关系发展得太快，那会让我有点不自在。", type: "avoidant" },
+      { text: "我有时会一边期待对方靠近，一边又对亲密感到防备。", type: "fearful" }
+    ];
+
+    const typeInfo = {
+      secure: {
+        name: "安全型恋爱",
+        short: "我相信爱，也相信自己",
+        color: "var(--safe)",
+        desc: "你在亲密关系中比较容易保持稳定、信任和沟通感。你通常能表达自己的需求，也能尊重彼此的独立空间。关系出现问题时，你更倾向于一起面对，而不是过度猜测或直接逃开。",
+        advice: [
+          "继续保持坦诚表达，不把需求藏成委屈。",
+          "在照顾关系的同时，也保留自己的节奏和边界。",
+          "遇到不安时，用沟通代替猜测，用行动积累信任。"
+        ]
+      },
+      anxious: {
+        name: "焦虑型恋爱",
+        short: "我真的很需要你",
+        color: "var(--anxious)",
+        desc: "你很重视关系中的回应和确认，容易因为不确定而感到不安。对方的语气、回复速度或细节变化，可能都会影响你的情绪。你不是太敏感，而是很需要被看见、被选择、被稳定地爱着。",
+        advice: [
+          "在想要确认时，尝试用清楚的话表达需求，而不是用试探来换答案。",
+          "给自己建立关系之外的安全感来源，例如朋友、兴趣、生活节奏。",
+          "当焦虑升起时，先区分事实和想象，再决定是否沟通。"
+        ]
+      },
+      avoidant: {
+        name: "回避型恋爱",
+        short: "请离我远一点",
+        color: "var(--avoidant)",
+        desc: "你很重视独立、空间和自我掌控感。亲密关系并不是你不需要，而是当关系发展太快、对方需求太强，或情绪压力变大时，你可能会本能地想先退一步。你的保护方式，常常是保持距离。",
+        advice: [
+          "保留空间没有错，但可以提前说明，而不是突然消失。",
+          "尝试把“我需要一点时间”说出来，让对方理解你的节奏。",
+          "慢慢练习表达脆弱，亲密不一定意味着失去自由。"
+        ]
+      },
+      fearful: {
+        name: "恐惧回避型恋爱",
+        short: "想靠近，又怕受伤",
+        color: "var(--fearful)",
+        desc: "你可能同时渴望亲密，又害怕亲密带来的受伤、失控或失望。你内心很想被理解和靠近，但当关系真的变近时，又容易启动防备。于是关系里可能出现拉近、推开、再拉近的循环。",
+        advice: [
+          "先允许自己矛盾：想靠近和怕受伤可以同时存在。",
+          "把关系推进得慢一点，给自己更多确认安全的时间。",
+          "当你想推开对方时，试着先说出害怕，而不是直接用冷淡保护自己。"
+        ]
+      }
+    };
+
+    const passwordScreen = document.getElementById("passwordScreen");
+    const app = document.getElementById("app");
+    const passwordForm = document.getElementById("passwordForm");
+    const passwordInput = document.getElementById("passwordInput");
+    const passwordError = document.getElementById("passwordError");
+    const lockBtn = document.getElementById("lockBtn");
+    const questionsEl = document.getElementById("questions");
+    const quizForm = document.getElementById("quizForm");
+    const progressFill = document.getElementById("progressFill");
+    const progressLabel = document.getElementById("progressLabel");
+    const submitTip = document.getElementById("submitTip");
+    const testPage = document.getElementById("testPage");
+    const resultPage = document.getElementById("resultPage");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultDesc = document.getElementById("resultDesc");
+    const typePill = document.getElementById("typePill");
+    const topScore = document.getElementById("topScore");
+    const scoreRing = document.getElementById("scoreRing");
+    const mixDesc = document.getElementById("mixDesc");
+    const scoreGrid = document.getElementById("scoreGrid");
+    const adviceList = document.getElementById("adviceList");
+    const backBtn = document.getElementById("backBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const printBtn = document.getElementById("printBtn");
+    const toast = document.getElementById("toast");
+
+    function unlock() {
+      sessionStorage.setItem("loveTestUnlocked", "true");
+      passwordScreen.classList.add("hide");
+      app.classList.remove("hide");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function lock() {
+      sessionStorage.removeItem("loveTestUnlocked");
+      app.classList.add("hide");
+      passwordScreen.classList.remove("hide");
+      passwordInput.value = "";
+      passwordError.textContent = "";
+      testPage.classList.remove("hide");
+      resultPage.classList.add("hide");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    passwordForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const input = passwordInput.value.trim();
+      if (input === PASSWORD) {
+        unlock();
+      } else {
+        passwordError.textContent = "密码不正确，请重新输入。";
+        passwordInput.focus();
+      }
+    });
+
+    lockBtn.addEventListener("click", lock);
+
+    if (sessionStorage.getItem("loveTestUnlocked") === "true") {
+      unlock();
+    }
+
+    function renderQuestions() {
+      questionsEl.innerHTML = questions.map((question, index) => {
+        const no = String(index + 1).padStart(2, "0");
+        const options = [1,2,3,4,5].map(value => `
+          <input type="radio" name="q${index}" id="q${index}_${value}" value="${value}" />
+          <label for="q${index}_${value}"><strong>${value}</strong><span>${scaleLabels[value - 1]}</span></label>
+        `).join("");
+        return `
+          <article class="question-card">
+            <div class="question-head">
+              <div class="question-no">${no}</div>
+              <div class="question-title">${question.text}</div>
+            </div>
+            <div class="scale" role="radiogroup" aria-label="第${index + 1}题评分">
+              ${options}
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function getAnswers() {
+      return questions.map((_, index) => {
+        const checked = document.querySelector(`input[name="q${index}"]:checked`);
+        return checked ? Number(checked.value) : null;
+      });
+    }
+
+    function updateProgress() {
+      const answers = getAnswers();
+      const done = answers.filter(value => value !== null).length;
+      const percent = Math.round((done / questions.length) * 100);
+      progressFill.style.width = `${percent}%`;
+      progressLabel.textContent = `已完成 ${done} / ${questions.length}`;
+      submitTip.textContent = done === questions.length ? "已完成全部题目，可以生成结果报告。" : `还差 ${questions.length - done} 题，请继续完成。`;
+    }
+
+    renderQuestions();
+    questionsEl.addEventListener("change", updateProgress);
+    updateProgress();
+
+    function calculateScores() {
+      const scores = { secure: 0, anxious: 0, avoidant: 0, fearful: 0 };
+      const answers = getAnswers();
+
+      answers.forEach((value, index) => {
+        if (value !== null) {
+          scores[questions[index].type] += value;
+        }
+      });
+
+      return scores;
+    }
+
+    function getTopTypes(scores) {
+      const entries = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+      const highest = entries[0][1];
+      return entries.filter(([_, score]) => highest - score <= 2);
+    }
+
+    function renderResults(scores) {
+      const entries = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+      const [topType, highest] = entries[0];
+      const info = typeInfo[topType];
+      const topTypes = getTopTypes(scores);
+
+      resultTitle.textContent = info.name;
+      resultDesc.textContent = info.desc;
+      typePill.textContent = info.short;
+      typePill.style.background = info.color;
+      topScore.textContent = highest;
+      const degree = Math.round((highest / 25) * 360);
+      scoreRing.style.background = `conic-gradient(${info.color} ${degree}deg, #ffe6ef ${degree}deg)`;
+
+      if (topTypes.length > 1) {
+        const names = topTypes.map(([key]) => typeInfo[key].name).join(" + ");
+        mixDesc.textContent = `你的结果呈现混合倾向：${names}。这说明你在不同关系状态或压力情境下，可能会出现不同的依恋反应。`;
+      } else {
+        mixDesc.textContent = `你的最高分类型是：${info.name}。可以把它当作理解自己关系模式的参考，而不是固定标签。`;
+      }
+
+      scoreGrid.innerHTML = Object.keys(typeInfo).map(key => {
+        const type = typeInfo[key];
+        const score = scores[key];
+        const percent = Math.round((score / 25) * 100);
+        return `
+          <article class="score-card">
+            <div class="score-title"><span>${type.name}</span><span>${score} / 25</span></div>
+            <div class="bar"><div class="bar-fill" style="width:${percent}%; background:${type.color};"></div></div>
+            <p>${type.short}。分数越高，说明这种关系模式在你身上越明显。</p>
+          </article>
+        `;
+      }).join("");
+
+      adviceList.innerHTML = info.advice.map(item => `<li>${item}</li>`).join("");
+    }
+
+    function findFirstUnanswered() {
+      const answers = getAnswers();
+      const index = answers.findIndex(value => value === null);
+      if (index >= 0) {
+        const card = questionsEl.children[index];
+        card.scrollIntoView({ behavior: "smooth", block: "center" });
+        card.animate([
+          { transform: "scale(1)", boxShadow: "0 14px 38px rgba(214, 65, 120, 0.10)" },
+          { transform: "scale(1.015)", boxShadow: "0 18px 52px rgba(214, 65, 120, 0.26)" },
+          { transform: "scale(1)", boxShadow: "0 14px 38px rgba(214, 65, 120, 0.10)" }
+        ], { duration: 620, easing: "ease" });
+      }
+    }
+
+    quizForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const answers = getAnswers();
+      if (answers.some(value => value === null)) {
+        submitTip.textContent = "还有题目未完成，请先补充完整。";
+        findFirstUnanswered();
+        return;
+      }
+      const scores = calculateScores();
+      renderResults(scores);
+      testPage.classList.add("hide");
+      resultPage.classList.remove("hide");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    backBtn.addEventListener("click", () => {
+      resultPage.classList.add("hide");
+      testPage.classList.remove("hide");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    printBtn.addEventListener("click", () => window.print());
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function getResultText() {
+      const scores = calculateScores();
+      const entries = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+      const [topType, highest] = entries[0];
+      const info = typeInfo[topType];
+      const scoreText = Object.entries(scores)
+        .map(([key, value]) => `${typeInfo[key].name}：${value}/25`)
+        .join("\n");
+      return `我的恋爱依恋类型测试结果：${info.name}\n\n${info.short}\n最高分：${highest}/25\n\n四项分数：\n${scoreText}\n\n结果解读：${info.desc}\n\n提示：依恋类型不是固定标签，更适合作为自我觉察的参考。`;
+    }
+
+    copyBtn.addEventListener("click", async () => {
+      const text = getResultText();
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("已复制结果文案");
+      } catch (error) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+        showToast("已复制结果文案");
+      }
+    });
+  </script>
+</body>
+</html>
